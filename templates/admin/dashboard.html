@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Dashboard</h1>
+    
+    <!-- Subject Selector -->
+    <form method="POST" action="{{ url_for('admin.dashboard') }}">
+        <label for="subject_id">Choose Subject:</label>
+        <select name="subject_id" id="subject_id" onchange="this.form.submit()">
+            <option value="">-- Select Subject --</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.subject_id }}" {% if selected_subject_id==subject.subject_id|string %}selected{% endif
+                %}>
+                {{ subject.subject }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+    
+    <!-- Chapters Table -->
+    {% if chapters %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Chapter Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chapter in chapters %}
+            <tr>
+                <td>{{ chapter.chapter_name }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('delete_chapter', chapter_id=chapter.chapter_id) }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                    <a href="#">View Quizzes</a>
+                    <!-- {{ url_for('view_quizzes', chapter_id=chapter.chapter_id) }}-->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
+    <!-- Add New Chapter -->
+    {% if selected_subject_id %}
+    <form method="POST" action="{{ url_for('add_chapter') }}">
+        <input type="hidden" name="subject_id" value="{{ selected_subject_id }}">
+        <label for="chapter_name">New Chapter Name:</label>
+        <input type="text" id="chapter_name" name="chapter_name" required>
+        <button type="submit">Add Chapter</button>
+    </form>
+    {% endif %}
+{% endblock %}
+
+
