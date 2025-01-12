@@ -1,5 +1,5 @@
 # import Flask
-from flask import Flask
+from flask import Flask, render_template
 # setup config, to get config object
 from config import Config
 # setup database object, without inheriting flask app instance
@@ -20,8 +20,14 @@ def create_app():
     with app.app_context():
         db.create_all()
         create_admin_if_not_exists()
+    # define the base route.
+    @app.route("/")
+    def landing_page():
+        return render_template("landing_page.html")
     # return full fledged app. 
     return app
+
+
 
 if __name__ == "__main__":
     app = create_app()

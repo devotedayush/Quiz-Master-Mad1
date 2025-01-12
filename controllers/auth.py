@@ -42,13 +42,14 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.user_id
+            session['role']='user'
             if user.is_admin:
+                session['role']='admin'
                 return redirect(url_for('admin.dashboard'))
             flash('Logged in successfully!', 'success')
-            return None # Replace with your home route
+            return None #home route
         else:
             flash('Invalid email or password.', 'error')
-    
     return render_template('login.html')
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -93,7 +94,7 @@ def register():
 @auth.route('/logout')
 @login_required
 def logout():
-    session.pop('user_id', None)
+    session.clear()
     flash('Logged out successfully.', 'success')
     return redirect(url_for('auth.login'))
 

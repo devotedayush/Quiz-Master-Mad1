@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from models import db, Subject, Chapter, Quiz, Degree, User
+from models import db, Subject, Chapter, Quiz, Degree_level, User
 from functools import wraps
 
 admin = Blueprint('admin', __name__)
-
 # Admin required decorator
+# admin req -> function in -> checks the user_id in session, -> if yes, then it return the function, that takes in the relevant argument
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -18,38 +18,73 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@admin.route('/admin/dashboard')
+
+
+@admin.route('/dashboard')
 @admin_required
 def dashboard():
-    subjects = Subject.query.all()
-    degrees = Degree.query.all()
+    subjects = Subject.query.all() #to refer anythign from subject table
+    degrees = Degree_level.query.all() #To choose the degree on creating a subject
     return render_template('admin/dashboard.html', subjects=subjects, degrees=degrees)
 
-@admin.route('/admin/add_subject', methods=['POST'])
+@admin.route('/add_subject', methods=['POST'])
 @admin_required
 def add_subject():
+    # basically refrence name as a key to submitted data. 
     subject_name = request.form.get('subject_name')
     degree_id = request.form.get('degree_id')
-    
+    print((subject_name,degree_id))
     if subject_name and degree_id:
-        subject = Subject(subject=subject_name, degree_id=degree_id)
+        subject = Subject(subject_name=subject_name, degree_id=degree_id)
         db.session.add(subject)
         db.session.commit()
         flash('Subject added successfully!', 'success')
     return redirect(url_for('admin.dashboard'))
 
-@admin.route('/admin/add_chapter', methods=['POST'])
+
+# GET carreies the info in url, POST carries it in the request body. 
+@admin.route('/get_chapters', methods=['GET','POST'])
+@admin_required
+def get_chapters():
+    if request.method == 'POST':
+        subject_id=request.form.get('subject_id')
+    else:
+        subject_id= request.args.get('subject_id')
+    print(subject_id)
+    current_subject=Subject.query.filter_by(subject_id=subject_id).first()
+    print(current_subject.subject_name)
+    session['selected_subject_id']=int(subject_id)
+    chapters = Chapter.query.filter_by(subject_id=subject_id).all()
+    if chapters:
+        return render_template('admin/dashboard.html', chapters=chapters, current_subject=current_subject)
+    else:
+        flash('no chapters', 'danger')
+        return render_template('admin/dashboard.html', current_subject=current_subject)
+
+
+@admin.route('/add_chapter', methods=['POST'])
 @admin_required
 def add_chapter():
     chapter_name = request.form.get('chapter_name')
     subject_id = request.form.get('subject_id')
-    
     if chapter_name and subject_id:
         chapter = Chapter(chapter_name=chapter_name, subject_id=subject_id)
         db.session.add(chapter)
         db.session.commit()
         flash('Chapter added successfully!', 'success')
     return redirect(url_for('admin.dashboard'))
+
+@admin.route('/delete_chapter', methods=['POST'])
+@admin_required
+def delete_chapter():
+    chapter_id = request.form.get('chapter_id')
+    chapter = Chapter.query.get(chapter_id)
+    if chapter:
+        db.session.delete(chapter)
+        db.session.commit()
+    return redirect(url_for('admin.get_chapters'))
+
+'''
 
 @admin.route('/admin/add_quiz', methods=['POST'])
 @admin_required
@@ -64,14 +99,11 @@ def add_quiz():
         flash('Quiz added successfully!', 'success')
     return redirect(url_for('admin.dashboard'))
 
-@admin.route('/admin/get_chapters/<subject_id>')
-@admin_required
-def get_chapters(subject_id):
-    chapters = Chapter.query.filter_by(subject_id=subject_id).all()
-    return render_template('admin/chapters_table.html', chapters=chapters)
+
 
 @admin.route('/admin/get_quizzes/<chapter_id>')
 @admin_required
 def get_quizzes(chapter_id):
     quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
     return render_template('admin/quizzes_modal.html', quizzes=quizzes, chapter_id=chapter_id)
+'''

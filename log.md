@@ -16,4 +16,13 @@ The Question table gets a ForeignKey field for linking to the Quiz
 2. way 2 (diffused & import)
     1. import config (load dotenv and filling value)
     2. import models (import app => db=SQLalchemy(app)=>with app.app_context, db.create_all())
-
+### setting up admin bugs
+1. database error
+2. options not visible error - either jinja syntax issue, or bootstrap overriding issue to be fixed by adding a div. 
+3. setting view chapter wihout changing the url, but relaoding with new session
+    1. I defined form to select subject id, and post it on endpoint admin.get_chapter
+        1. I reload it in new html, whilst storing the subject_id in endpoint
+        2. I store it as session, and reload the current url, and the jinja template waiting for chapter, suddenly presents itself. 
+### Errors
+1. 405 error - Sending Get Request, When Post is needed, and vice versa. 
+2. 500 error - Server side issue.

@@ -11,11 +11,11 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)  # Increased length for hashed passwords
     full_name = db.Column(db.String(30), nullable=False)
     dob = db.Column(db.Date, nullable=True)
-    degree_id = db.Column(db.Integer, db.ForeignKey('degree.degree_id'))
+    degree_id = db.Column(db.Integer, db.ForeignKey('degree_level.degree_id'))
     is_admin = db.Column(db.Boolean, nullable=False, default=False)  # Fixed "db.column" to "db.Column"
 
     # Relationships
-    degree = db.relationship('Degree', backref=db.backref('users', lazy=True))
+    degree = db.relationship('Degree_level', backref=db.backref('users', lazy=True))
 
     def set_password(self, password):
         # Implement password hashing logic here, e.g., using werkzeug.security
@@ -36,19 +36,20 @@ def create_admin_if_not_exists():
         db.session.commit()
         print("Admin user created successfully")
 
-class Degree(db.Model):
-    __tablename__ = 'degree'
+class Degree_level(db.Model):
+    __tablename__ = 'degree_level'
     degree_id = db.Column(db.Integer, primary_key=True)
-    degree_name = db.Column(db.String(10), unique=True, nullable=False)
+    degree_level = db.Column(db.String(10), unique=True, nullable=False)
 
 class Subject(db.Model):
     __tablename__ = 'subjects'
     subject_id = db.Column(db.Integer, primary_key=True)
-    subject = db.Column(db.String(20), nullable=False)
-    degree_id = db.Column(db.Integer, db.ForeignKey('degree.degree_id'))
+    subject_name = db.Column(db.String(20), nullable=False)
+    degree_id = db.Column(db.Integer, db.ForeignKey('degree_level.degree_id'))
 
     # Relationships
-    degree = db.relationship('Degree', backref=db.backref('subjects', lazy=True))
+    degree = db.relationship('Degree_level', backref=db.backref('subjects', lazy=True))
+    #subjects.chapters
     chapters = db.relationship('Chapter', backref=db.backref('subject', lazy=True))
 
 class Chapter(db.Model):
