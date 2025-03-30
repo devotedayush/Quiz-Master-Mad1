@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h1> This is the landing page</h1>
-<a href="/auth/login" /> login
+{% block title %}Welcome to Quiz Master{% endblock %}
 
+{% block content %}
+<div class="container text-center my-5">
+    <h1 class="display-5 fw-bold" style="color: #6c63ff;">Quiz Master</h1>
+    <p class="text-muted mt-3" style="font-size: 1.2rem;">Your journey to fun and learning starts here!</p>
+    <div class="my-4">
+        <img src="https://img.freepik.com/premium-vector/quiz-logo-with-speech-bubble-icon_149152-813.jpg" alt="Quiz Fun" class="img-fluid rounded-circle shadow-sm">
+    </div>
+    <div class="mt-4">
+        <a href="/auth/login" class="btn btn-primary btn-lg px-4" style="background-color: #6c63ff; border: none;">Get Started</a>
+    </div>
+</div>
 {% endblock %}

@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Date, Time
 db = SQLAlchemy()
 
-
+# models.py
 class User(db.Model):
     __tablename__ = 'user'
     user_id = db.Column(db.Integer, primary_key=True)
@@ -68,8 +68,8 @@ class Quiz(db.Model):
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapters.chapter_id'))
 
     # Relationships
-    questions = db.relationship('Question', backref=db.backref('quiz', lazy=True))
-
+    questions = db.relationship('Question', backref='quiz', cascade='all, delete-orphan')
+    
 class Question(db.Model):
     __tablename__ = 'questions'
     question_id = db.Column(db.Integer, primary_key=True)
@@ -77,11 +77,11 @@ class Question(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.quiz_id'))
 
     # Relationships question.options
-    options = db.relationship('Option', backref=db.backref('question', lazy=True))
-
+    options = db.relationship('Option', backref='question', cascade='all, delete-orphan')
 class Option(db.Model):
     __tablename__ = 'options'
     option_id = db.Column(db.Integer, primary_key=True)
+    option_text = db.Column(db.Text, nullable=False)  # THIS WAS MISSING
     is_correct = db.Column(db.Boolean, nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.question_id'))
 

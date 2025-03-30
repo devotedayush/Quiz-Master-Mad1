@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<!--admin/view_questions.html-->
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Questions for {{ quiz.quiz_name }}</h2>
+
+    {% if questions %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Question</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in questions %}
+                <tr>
+                    <td>{{ question.question_id }}</td>
+                    <td>{{ question.question }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.delete_question')}}" class="d-inline">
+                            <input type="hidden" name="question_id" value="{{ question.question_id }}">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
+                                Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">No questions found for {{ quiz.quiz_name }}</div>
+    {% endif %}
+
+    <!-- Add Question Form -->
+    <div class="card shadow-sm p-3 mt-4 mx-auto" style="max-width: 450px;">
+        <h5 class="card-title mb-3 text-center">Add a New Question</h5>
+        <form method="POST" action="{{ url_for('admin.add_question') }}">
+            <input type="hidden" name="quiz_id" value="{{ quiz.quiz_id }}">
+            <div class="mb-3">
+                <label for="question" class="form-label">Question</label>
+                <input type="text" name="question" id="question" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Options (Check the correct answer)</label>
+                <div id="options">
+                    <div class="input-group mb-2">
+                        <input type="text" name="options[0][option_text]" class="form-control" placeholder="Option 1" required>
+                        <div class="input-group-text">
+                            <input type="radio" name="correct_option" value="0" required>
+                        </div>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="text" name="options[1][option_text]" class="form-control" placeholder="Option 2" required>
+                        <div class="input-group-text">
+                            <input type="radio" name="correct_option" value="1" required>
+                        </div>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="text" name="options[2][option_text]" class="form-control" placeholder="Option 3" required>
+                        <div class="input-group-text">
+                            <input type="radio" name="correct_option" value="2" required>
+                        </div>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="text" name="options[3][option_text]" class="form-control" placeholder="Option 4" required>
+                        <div class="input-group-text">
+                            <input type="radio" name="correct_option" value="3" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success"><i class="bi bi-plus-lg"></i> Add Question</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

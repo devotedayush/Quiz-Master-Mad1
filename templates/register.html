@@ -35,12 +35,13 @@
 
                         <div class="mb-3">
                             <label for="degree_level" class="form-label">Select Degree Level</label>
-                            <select id="degree_level" class="form-select" name="degree_level" required>
-                                <option value="">Select Degree</option>
-                                {% for degree in degrees %}
-                                <option value="{{ degree }}">{{ degree }}</option>
-                                {% endfor %}
-                            </select>
+                        <select id="degree_level" class="form-select" name="degree_level" required>
+                            <option value="">Select Degree</option>
+                            {% for degree in degrees %}
+                            <option value="{{ degree.degree_id }}">{{ degree.degree_level }}</option>
+                            {% endfor %}
+                        </select>
+
                         </div>
 
                         <div class="mb-3">

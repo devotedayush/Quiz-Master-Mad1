@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Summary{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Quiz Attempts Summary</h2>
+    {% if attempts %}
+    <table class="table">
+         <thead>
+              <tr>
+                   <th>Quiz Name</th>
+                   <th>Date</th>
+                   <th>Score</th>
+                   <th>Duration</th>
+              </tr>
+         </thead>
+         <tbody>
+              {% for attempt in attempts %}
+              <tr>
+                   <td>{{ attempt.quiz.quiz_name }}</td>
+                   <td>{{ attempt.date_of_attempt }}</td>
+                   <td>{{ attempt.quiz_score }}</td>
+                   <td>{{ attempt.duration_of_attempt }}</td>
+              </tr>
+              {% endfor %}
+         </tbody>
+    </table>
+    <!-- Chart Section -->
+    <div class="mt-5">
+         <canvas id="scoreChart" width="400" height="200"></canvas>
+    </div>
+    {% else %}
+    <p>No quiz attempts found.</p>
+    {% endif %}
+    <a href="{{ url_for('user.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Prepare data arrays using Jinja2
+    var labels = [
+        {% for attempt in attempts %}
+            "{{ attempt.quiz.quiz_name }} ({{ attempt.date_of_attempt }})",
+        {% endfor %}
+    ];
+    var scores = [
+        {% for attempt in attempts %}
+            {{ attempt.quiz_score }},
+        {% endfor %}
+    ];
+
+    // Create a bar chart to display quiz scores
+    var ctx = document.getElementById('scoreChart').getContext('2d');
+    var scoreChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Quiz Score',
+                data: scores,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

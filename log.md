@@ -23,6 +23,24 @@ The Question table gets a ForeignKey field for linking to the Quiz
     1. I defined form to select subject id, and post it on endpoint admin.get_chapter
         1. I reload it in new html, whilst storing the subject_id in endpoint
         2. I store it as session, and reload the current url, and the jinja template waiting for chapter, suddenly presents itself. 
+4. current_subject not defined. 
+    - on loging in the admin -> it fetches all subjects and degree. 
+        - form in the admin dashboard takes action to send the data (post req) to /add_subject  -> withh add subject modal and button -> redirects to the same url, but the added degree has been fetched by the query just after it was added. 
+    - Select subject and view subject button -> sends post req to /get_chapters -> current subject is not defined
+        - not defined than flash error in backend, still not defined, then may be because it's the jinja template refrence error, in which case use if and else statement with probper alignment there. 
+5. Once subject is chosen, and view is clicked, it can't redirect to same url, but render template under get_chapter url TT TT. 
+    - can't i send the infor in redirect?  no I fookin can't
+    - subway 1:
+        - use javascript for dynamic rendering. 
+    - subway 2 : 
+        - use different url and html, to conditionally load the data. 
+
+6. Issue with submitting the question  : 
+    -  File "/Users/ayushmansingh/code/Quiz-Master-Mad1/controllers/admin.py", line 164, in add_question
+    - return render_template('admin/view_questions.html', quiz_id=quiz_id)
+    -        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    - jinja2.exceptions.UndefinedError: 'quiz' is undefined
+
 ### Errors
 1. 405 error - Sending Get Request, When Post is needed, and vice versa. 
 2. 500 error - Server side issue.

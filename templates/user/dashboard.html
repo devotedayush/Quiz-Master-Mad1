@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+    <!-- User Details -->
+    <div class="user-details mb-4 p-3 border rounded">
+        <p><strong>Name:</strong> {{ user_obj.full_name }}</p>
+        <p><strong>Email:</strong> {{ user_obj.email }}</p>
+        <p>
+            <strong>Degree Level:</strong>
+            {% if user_obj.degree %}
+            {{ user_obj.degree.degree_level }}
+            {% else %}
+            N/A
+            {% endif %}
+        </p>
+    </div>
+    <!-- Search Bar -->
+    <form method="GET" action="{{ url_for('user.dashboard') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="search_query" placeholder="Search quizzes..."
+                value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+    <!-- Quiz Cards -->
+    <div class="row">
+        {% for quiz in quizzes %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ quiz.quiz_name }}</h5>
+                    <p class="card-text">
+                        Subject: {{ quiz.chapter.subject.subject_name }}<br>
+                        Chapter: {{ quiz.chapter.chapter_name }}
+                    </p>
+                    <a href="{{ url_for('user.take_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-success">Take
+                        Quiz</a>
+                    <a href="{{ url_for('user.quiz_info', quiz_id=quiz.quiz_id) }}" class="btn btn-info">More Info</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p>No quizzes available.</p>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('user.quiz_summary') }}" class="btn btn-secondary mt-3">View Quiz Summary</a>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Take Quiz - {{ quiz.quiz_name }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ quiz.quiz_name }}</h2>
+    <p>Chapter: {{ quiz.chapter.chapter_name }} | Subject: {{ quiz.chapter.subject.subject_name }}</p>
+    <p>Please complete the quiz. The timer starts when the page is loaded.</p>
+    <form method="POST" action="{{ url_for('user.submit_quiz', quiz_id=quiz.quiz_id) }}">
+        {% for question in quiz.questions %}
+        <div class="mb-3">
+            <p><strong>{{ loop.index }}. {{ question.question }}</strong></p>
+            {% for option in question.options %}
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="question_{{ question.question_id }}"
+                    id="option_{{ option.option_id }}" value="{{ option.option_id }}">
+                <label class="form-check-label" for="option_{{ option.option_id }}">
+                    {{ option.option_text }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+    </form>
+</div>
+{% endblock %}

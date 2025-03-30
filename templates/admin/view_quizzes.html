@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Quizzes for {{ chapter.chapter_name }}</h2>
+
+    {% if quizzes %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Quiz ID</th>
+                    <th>Quiz Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz in quizzes %}
+                <tr>
+                    <td>{{ quiz.quiz_id }}</td>
+                    <td>{{ quiz.quiz_name }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.delete_quiz') }}" class="d-inline">
+                            <input type="hidden" name="quiz_id" value="{{ quiz.quiz_id }}">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
+                                Delete</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin.get_questions') }}" class="d-inline">
+                            <input type="hidden" name="quiz_id" value="{{ quiz.quiz_id }}">
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> View
+                                Questions</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">No quizzes found for {{ chapter.chapter_name }}</div>
+    {% endif %}
+
+    <!-- Add Quiz Form -->
+    <div class="card shadow-sm p-3 mt-4 mx-auto" style="max-width: 450px;">
+        <h5 class="card-title mb-3 text-center">Add a New Quiz</h5>
+        <form method="POST" action="{{ url_for('admin.add_quiz') }}">
+            <input type="hidden" name="chapter_id" value="{{ chapter.chapter_id }}">
+            <div class="mb-3">
+                <label for="quiz_name" class="form-label">Quiz Name</label>
+                <input type="text" name="quiz_name" id="quiz_name" class="form-control" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success"><i class="bi bi-plus-lg"></i> Add Quiz</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Analytics{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">Analytics Dashboard</h2>
+
+    <!-- Summary Cards -->
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card analytics-card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5>Total Users</h5>
+                    <h3>{{ total_users }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card analytics-card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5>Total Quizzes</h5>
+                    <h3>{{ total_quizzes }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card analytics-card bg-info text-white mb-3">
+                <div class="card-body">
+                    <h5>Quiz Attempts</h5>
+                    <h3>{{ total_attempts }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card analytics-card bg-warning text-white mb-3">
+                <div class="card-body">
+                    <h5>Avg. Score</h5>
+                    <h3>{{ avg_score }}%</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    
+
+    <!-- Charts Row -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quiz Performance</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Popular Quizzes</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for quiz in popular_quizzes %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            {{ quiz[0] }}
+                            <span class="badge bg-primary rounded-pill">{{ quiz[1] }}</span>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item text-center text-muted">No quiz attempts yet</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ quiz_names| tojson }},
+        datasets: [
+        {
+            label: 'Attempts',
+            data: {{ quiz_attempts| tojson }},
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        yAxisID: 'y'
+                    },
+        {
+            label: 'Avg Score (%)',
+            data: {{ quiz_scores| tojson }},
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+        type: 'line',
+        yAxisID: 'y1'
+                    }
+    ]
+            },
+        options: {
+        responsive: true,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
+        scales: {
+            y: {
+                type: 'linear',
+                position: 'left',
+                title: {
+                    display: true,
+                    text: 'Attempts'
+                }
+            },
+            y1: {
+                type: 'linear',
+                position: 'right',
+                grid: {
+                    drawOnChartArea: false,
+                },
+                title: {
+                    display: true,
+                    text: 'Score (%)'
+                },
+                min: 0,
+                max: 100
+            }
+        }
+    }
+        });
+    });
+</script>
+{% endblock %}

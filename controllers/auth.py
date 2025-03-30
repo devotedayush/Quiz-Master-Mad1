@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import check_password_hash
 from functools import wraps
-from models import User
+from models import User, Degree_level
 from app import db
 
 # Create Blueprint
@@ -47,19 +47,20 @@ def login():
                 session['role']='admin'
                 return redirect(url_for('admin.dashboard'))
             flash('Logged in successfully!', 'success')
-            return None #home route
+            return redirect(url_for('user.dashboard')) #home route
         else:
             flash('Invalid email or password.', 'error')
     return render_template('login.html')
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    degrees = Degree_level.query.all()
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
         full_name = request.form.get('full_name')
-        degree_id = request.form.get('degree_id')
+        degree_id = request.form.get('degree_level')
         
         # Check if user already exists
         user_exists = User.query.filter(
@@ -89,7 +90,7 @@ def register():
             flash('An error occurred during registration.', 'error')
             print(e)
     
-    return render_template('register.html')
+    return render_template('register.html', degrees=degrees)
 
 @auth.route('/logout')
 @login_required

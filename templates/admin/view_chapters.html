@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Chapters in {{ current_subject.subject_name }}</h2>
+
+    {% if chapters %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Chapter Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chapter in chapters %}
+                <tr>
+                    <td>{{ chapter.chapter_id }}</td>
+                    <td>{{ chapter.chapter_name }}</td>
+                    <td>
+                        <form method="POST" action="/admin/delete_chapter" class="d-inline">
+                            <input type="hidden" name="chapter_id" value="{{ chapter.chapter_id }}">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
+                                Delete</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin.get_quizzes')}}" class="d-inline">
+                            <input type="hidden" name="chapter_id" value="{{ chapter.chapter_id }}">
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> View
+                                Quizzes</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">No chapters found for {{ current_subject.subject_name }}</div>
+    {% endif %}
+
+    <!-- Add Chapter Form -->
+    <div class="card shadow-sm p-3 mt-4 mx-auto" style="max-width: 450px;">
+        <h5 class="card-title mb-3 text-center">Add a New Chapter</h5>
+        <form method="POST" action="/admin/add_chapter">
+            <input type="hidden" name="subject_id" value="{{ current_subject.subject_id }}">
+            <div class="mb-3">
+                <label for="chapter_name" class="form-label">Chapter Name</label>
+                <input type="text" name="chapter_name" id="chapter_name" class="form-control" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success"><i class="bi bi-plus-lg"></i> Add Chapter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
